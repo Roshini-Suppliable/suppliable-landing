@@ -138,12 +138,13 @@
       'Requirement:\n' + data.requirement;
 
     var waUrl = 'https://wa.me/918778627926?text=' + encodeURIComponent(message);
-    window.open(waUrl, '_blank');
 
-    form.reset();
     success.hidden = false;
     success.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(function () { success.hidden = true; }, 8000);
+    form.reset();
+
+    /* slight delay so the user sees the success message before WhatsApp loads */
+    setTimeout(function () { window.location.href = waUrl; }, 600);
   });
 
   /* ---- How it works: step cards drive the embedded app demo ---- */
