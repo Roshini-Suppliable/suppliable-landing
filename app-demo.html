@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Suppliable — Interactive App Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* =======================================================
+   Suppliable — interactive app demo (standalone, no deps)
+   Open this file directly to preview the app on desktop.
+   ======================================================= */
+:root{
+  --purple:#4B22D6; --purple-dark:#35179C; --orange:#F26A1B; --orange-dk:#D9560C;
+  --ink:#14122B; --mist:#F4F3F9; --line:#E7E5F1; --muted:#6B6880; --green:#1B9E4B;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  background:#E9E8F2;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+
+/* phone-sized app shell */
+.app{
+  position:relative;width:100%;max-width:430px;height:100vh;max-height:100vh;
+  background:#fff;display:flex;flex-direction:column;overflow:hidden;
+}
+@media(min-width:470px){
+  body{padding:20px;}
+  .app{height:860px;border-radius:30px;box-shadow:0 30px 70px rgba(20,18,43,.35);}
+}
+
+/* status bar */
+.statusbar{
+  flex:none;display:flex;justify-content:space-between;align-items:center;
+  padding:9px 20px 5px;font-size:13px;font-weight:700;
+}
+.sb-right{display:flex;align-items:center;gap:6px;}
+.sb-bat{border:1.5px solid var(--ink);border-radius:3px;padding:0 3px;font-size:9px;font-weight:800;}
+
+.stage{position:relative;flex:1;overflow:hidden;}
+
+/* screens */
+.screen{
+  position:absolute;inset:0;display:none;flex-direction:column;background:#fff;
+}
+.screen.active{display:flex;animation:fade .22s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+.body{flex:1;overflow-y:auto;padding:14px 16px 24px;}
+.body::-webkit-scrollbar{width:0;}
+
+/* ---- app bar ---- */
+.appbar{
+  flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:6px 16px 12px;border-bottom:1px solid var(--line);
+}
+.appbar.simple{gap:12px;justify-content:flex-start;}
+.appbar.simple h2{font-size:18px;font-weight:800;letter-spacing:-.02em;}
+.appbar .sub{font-size:11px;color:var(--muted);font-weight:600;}
+.brand{font-size:19px;font-weight:800;color:var(--purple);letter-spacing:-.03em;}
+.brand .bi{position:relative;}
+.brand .bi::after{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;background:var(--orange);border-radius:50%;}
+.appbar-right{display:flex;align-items:center;gap:8px;}
+.loc{
+  display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;
+  border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;
+}
+.cartbtn{position:relative;width:38px;height:38px;border:1.5px solid var(--line);
+  border-radius:11px;font-size:17px;display:grid;place-items:center;}
+.badge{
+  position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;
+  background:var(--orange);color:#fff;border-radius:999px;font-size:10px;font-weight:800;
+  display:grid;place-items:center;border:2px solid #fff;
+}
+.iconbtn{width:38px;height:38px;border:1.5px solid var(--line);border-radius:11px;
+  font-size:18px;display:grid;place-items:center;flex:none;}
+
+/* ---- home ---- */
+.searchfield{
+  width:100%;text-align:left;background:var(--mist);border:1.5px solid var(--line);
+  border-radius:13px;padding:13px 16px;color:var(--muted);font-size:14px;font-weight:600;
+}
+.promo{
+  display:flex;align-items:center;gap:12px;background:var(--purple);color:#fff;
+  border-radius:16px;padding:14px;margin-top:14px;
+}
+.promo-ic{width:42px;height:42px;background:var(--purple-dark);border-radius:11px;
+  display:grid;place-items:center;font-size:20px;flex:none;}
+.promo-tx{flex:1;line-height:1.3;}
+.promo-tx strong{font-size:14px;display:block;}
+.promo-tx span{font-size:11px;opacity:.8;}
+.promo-pill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
+  border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;flex:none;}
+
+.sec-h{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;
+  letter-spacing:-.02em;margin:22px 0 12px;}
+.sec-h .bar{width:4px;height:18px;background:var(--purple);border-radius:2px;}
+
+.catgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.catcard{
+  background:#fff;border:1.5px solid var(--line);border-radius:13px;
+  padding:12px 4px;text-align:center;transition:transform .12s,border-color .12s;
+}
+.catcard:active{transform:scale(.95);border-color:var(--purple);}
+.catcard .ce{font-size:24px;}
+.catcard .cn{font-size:10px;font-weight:700;margin-top:5px;line-height:1.2;}
+
+.usp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  background:var(--mist);border-radius:14px;padding:14px 8px;}
+.usp div{text-align:center;}
+.usp .ue{font-size:19px;}
+.usp .ul{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
+  margin-top:4px;color:var(--muted);line-height:1.25;}
+
+/* ---- search ---- */
+.searchbar{
+  flex:none;display:flex;align-items:center;gap:9px;padding:6px 14px 12px;
+  border-bottom:1px solid var(--line);
+}
+.searchbar input{
+  flex:1;border:1.5px solid var(--orange);border-radius:11px;padding:11px 14px;
+  font-size:14px;font-weight:600;outline:none;
+}
+.searchbar input::placeholder{color:var(--muted);font-weight:600;}
+.kicker{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--muted);
+  text-transform:uppercase;margin:4px 0 12px;}
+.chips{display:flex;flex-wrap:wrap;gap:9px;}
+.chip{
+  display:flex;align-items:center;gap:5px;border:1.5px solid var(--line);
+  border-radius:999px;padding:9px 14px;font-size:13px;font-weight:700;
+}
+.chip:active{background:var(--mist);}
+.chip .tr{color:var(--orange);font-size:12px;}
+
+.prow{
+  display:flex;align-items:center;gap:11px;padding:13px 2px;
+  border-bottom:1px solid var(--line);
+}
+.prow.oos{opacity:.6;}
+.pthumb{position:relative;overflow:hidden;width:54px;height:54px;background:var(--mist);
+  border:1px solid var(--line);border-radius:11px;display:grid;place-items:center;
+  font-size:24px;flex:none;}
+.thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;}
+.pinfo{flex:1;min-width:0;}
+.pkick{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--muted);
+  text-transform:uppercase;}
+.pname{font-size:13.5px;font-weight:700;line-height:1.25;margin:1px 0 3px;}
+.pprice{font-size:14px;font-weight:800;}
+.punit{font-size:11px;font-weight:700;color:var(--muted);}
+.pnote{font-size:10px;font-weight:700;color:var(--orange);margin-top:2px;}
+.padd{flex:none;}
+.addbtn{
+  border:1.5px solid var(--orange);color:#fff;background:var(--orange);
+  border-radius:10px;padding:8px 18px;font-size:12.5px;font-weight:800;
+}
+.addbtn:active{transform:scale(.94);}
+.addbtn.ghost{background:#fff;color:var(--orange);}
+.oospill{background:var(--mist);color:var(--muted);font-size:11px;font-weight:800;
+  border-radius:8px;padding:8px 12px;display:inline-block;}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--orange);
+  border-radius:10px;overflow:hidden;}
+.stepper button{width:30px;height:32px;background:var(--orange);color:#fff;
+  font-size:17px;font-weight:800;display:grid;place-items:center;}
+.stepper span{min-width:26px;text-align:center;font-size:13px;font-weight:800;}
+.emptxt{text-align:center;color:var(--muted);font-size:13px;font-weight:600;padding:40px 20px;}
+
+/* ---- cart ---- */
+.crow{display:flex;align-items:center;gap:11px;padding:13px 2px;border-bottom:1px solid var(--line);}
+.crow .pinfo .pvar{font-size:11px;color:var(--muted);font-weight:700;}
+.billcard{background:var(--mist);border-radius:14px;padding:15px;margin-top:16px;}
+.billrow{display:flex;justify-content:space-between;font-size:13px;font-weight:600;
+  margin-bottom:9px;color:var(--muted);}
+.billrow.total{margin:12px 0 0;padding-top:12px;border-top:1.5px dashed var(--line);
+  font-size:16px;font-weight:800;color:var(--ink);}
+.free{color:var(--green);font-weight:800;}
+.checkoutbar{
+  flex:none;display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border-top:1px solid var(--line);background:#fff;
+}
+.checkoutbar .ctot{flex:1;}
+.checkoutbar .ctot small{font-size:10px;color:var(--muted);font-weight:700;display:block;}
+.checkoutbar .ctot strong{font-size:18px;font-weight:800;}
+.bigbtn{
+  background:var(--orange);color:#fff;border-radius:13px;padding:14px 26px;
+  font-size:14px;font-weight:800;flex:none;
+}
+.bigbtn:active{transform:scale(.97);}
+.bigbtn.full{width:100%;}
+
+/* ---- track ---- */
+.livepill{margin-left:auto;background:#E9F8EE;color:var(--green);font-size:10px;
+  font-weight:800;border-radius:999px;padding:5px 10px;}
+.statuscard{display:flex;align-items:center;gap:9px;background:#EAF1FF;
+  border-radius:13px;padding:13px 15px;font-weight:800;font-size:14px;color:#2563EB;}
+.statuscard .when{margin-left:auto;font-size:11px;color:var(--muted);font-weight:700;}
+.livebox{border:1.5px solid #FCD9B6;background:#FFF6EC;border-radius:14px;
+  padding:14px;margin-top:12px;}
+.livebox .lt{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--orange);}
+.livebox .eta{font-size:19px;font-weight:800;color:var(--orange-dk);margin:6px 0 2px;}
+.livebox .upd{font-size:11px;color:var(--muted);font-weight:600;}
+.livebtns{display:flex;gap:8px;margin-top:12px;}
+.livebtns button{flex:1;border:1.5px solid #FCD9B6;border-radius:10px;padding:9px;
+  font-size:12px;font-weight:800;color:var(--orange-dk);background:#fff;}
+.infocard{display:flex;align-items:center;gap:11px;border:1.5px solid var(--line);
+  border-radius:13px;padding:13px;margin-top:12px;}
+.infocard .ic{width:40px;height:40px;background:var(--mist);border-radius:10px;
+  display:grid;place-items:center;font-size:18px;flex:none;}
+.infocard .lab{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted);
+  text-transform:uppercase;}
+.infocard .val{font-size:13.5px;font-weight:800;}
+.infocard .val small{font-weight:600;color:var(--muted);font-size:11.5px;}
+.callbtn{margin-left:auto;width:38px;height:38px;background:#E9F8EE;border-radius:10px;
+  display:grid;place-items:center;font-size:16px;}
+.timeline{margin-top:18px;}
+.timeline .tlh{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:14px;}
+.tlitem{display:flex;gap:12px;}
+.tldot{display:flex;flex-direction:column;align-items:center;flex:none;}
+.tldot .dot{width:22px;height:22px;border-radius:50%;background:var(--purple);
+  color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;}
+.tldot .line{width:2px;flex:1;background:var(--purple);min-height:18px;}
+.tlitem.pending .dot{background:var(--line);color:var(--muted);}
+.tlitem.pending .line{background:var(--line);}
+.tlitem:last-child .line{display:none;}
+.tltext{padding-bottom:16px;}
+.tltext strong{font-size:13.5px;font-weight:800;display:block;}
+.tltext span{font-size:11.5px;color:var(--muted);font-weight:600;}
+
+/* ---- bottom nav ---- */
+.botnav{
+  flex:none;display:flex;border-top:1px solid var(--line);padding:6px 4px 8px;background:#fff;
+}
+.navitem{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:5px 0;color:var(--muted);font-size:10px;font-weight:700;}
+.navitem .ni{font-size:18px;}
+.navitem.on{color:var(--purple);}
+
+/* ---- toast ---- */
+.toast{
+  position:absolute;left:50%;bottom:78px;transform:translate(-50%,16px);
+  background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;
+  padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:30;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* ---- bottom sheet ---- */
+.sheetwrap{
+  position:absolute;inset:0;background:rgba(20,18,43,.45);z-index:40;
+  display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.sheetwrap.show{opacity:1;pointer-events:auto;}
+.sheet{
+  width:100%;background:#fff;border-radius:22px 22px 0 0;padding:18px 18px 24px;
+  transform:translateY(100%);transition:transform .25s ease;max-height:80%;overflow-y:auto;
+}
+.sheetwrap.show .sheet{transform:translateY(0);}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.sheet-head h3{font-size:16px;font-weight:800;}
+.sheet-head .sk{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--muted);
+  text-transform:uppercase;}
+.sheet-x{width:32px;height:32px;border:1.5px solid var(--line);border-radius:50%;
+  font-size:15px;display:grid;place-items:center;flex:none;}
+.varopt{
+  display:flex;align-items:center;justify-content:space-between;
+  border:1.5px solid var(--line);border-radius:13px;padding:14px;margin-top:10px;
+}
+.varopt.oos{border-color:#F6D2D2;background:#FEF4F4;opacity:.85;}
+.varopt:not(.oos):active{border-color:var(--purple);background:var(--mist);}
+.varopt .vl{font-size:15px;font-weight:800;}
+.varopt .vs{font-size:11px;font-weight:700;color:var(--muted);}
+.varopt.oos .vs{color:#D8302F;}
+.varopt .vp{font-size:15px;font-weight:800;}
+
+/* hint */
+.hint{
+  position:absolute;left:50%;bottom:80px;transform:translateX(-50%);
+  background:var(--purple);color:#fff;font-size:11px;font-weight:700;
+  padding:7px 14px;border-radius:999px;z-index:25;white-space:nowrap;
+  box-shadow:0 6px 18px rgba(75,34,214,.4);
+}
+.hint.gone{display:none;}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="statusbar">
+    <span id="clock">9:41</span>
+    <span class="sb-right">
+      <svg width="16" height="11" viewBox="0 0 16 11"><path fill="#14122B" d="M0 8h2v3H0zM4 6h2v5H4zM8 3h2v8H8zM12 0h2v11h-2z"/></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11"><path fill="#14122B" d="M7.5 2.2c2 0 3.8.8 5.1 2l1.1-1.1A9 9 0 0 0 1.3 3.1l1.1 1.1A7.2 7.2 0 0 1 7.5 2.2Zm0 3.2c1.1 0 2.1.4 2.9 1.2l1.1-1.1a6 6 0 0 0-8 0l1.1 1.1c.8-.8 1.8-1.2 2.9-1.2Zm0 3.2L9.2 9.8a2.4 2.4 0 0 0-3.4 0L7.5 8.6Z"/></svg>
+      <span class="sb-bat">100</span>
+    </span>
+  </div>
+
+  <div class="stage">
+
+    <!-- ============ HOME ============ -->
+    <section class="screen active" data-screen="home">
+      <header class="appbar">
+        <div class="brand">Suppl<span class="bi">i</span>able</div>
+        <div class="appbar-right">
+          <button class="loc">📍 Home ▾</button>
+          <button class="cartbtn" data-go="cart">🛒<span class="badge" data-badge>0</span></button>
+        </div>
+      </header>
+      <div class="body">
+        <button class="searchfield" data-go="search">🔍&nbsp; Search cement, steel, pipes...</button>
+        <div class="promo">
+          <div class="promo-ic">⚡</div>
+          <div class="promo-tx"><strong>Delivered to your site in 60 mins</strong><span>Construction materials, straight to site</span></div>
+          <div class="promo-pill">60 MIN</div>
+        </div>
+
+        <div class="sec-h"><span class="bar"></span>Shop By Category</div>
+        <div class="catgrid" id="catGrid"></div>
+
+        <div class="sec-h"><span class="bar"></span>Why Suppliable</div>
+        <div class="usp">
+          <div><div class="ue">⚡</div><div class="ul">60 Min Delivery</div></div>
+          <div><div class="ue">💵</div><div class="ul">COD Available</div></div>
+          <div><div class="ue">🏷️</div><div class="ul">Best Price</div></div>
+          <div><div class="ue">🛡️</div><div class="ul">Genuine Goods</div></div>
+        </div>
+      </div>
+      <nav class="botnav"></nav>
+    </section>
+
+    <!-- ============ SEARCH ============ -->
+    <section class="screen" data-screen="search">
+      <header class="searchbar">
+        <button class="iconbtn" data-go="home">←</button>
+        <input id="searchInput" placeholder="Search for materials..." autocomplete="off" />
+        <button class="iconbtn" id="clearSearch">✕</button>
+      </header>
+      <div class="body" id="searchBody"></div>
+      <nav class="botnav"></nav>
+    </section>
+
+    <!-- ============ CART ============ -->
+    <section class="screen" data-screen="cart">
+      <header class="appbar simple">
+        <button class="iconbtn" data-go="home">←</button>
+        <h2>Your Cart</h2>
+      </header>
+      <div class="body" id="cartBody"></div>
+      <div class="checkoutbar" id="checkoutBar"></div>
+      <nav class="botnav"></nav>
+    </section>
+
+    <!-- ============ TRACK ============ -->
+    <section class="screen" data-screen="track">
+      <header class="appbar simple">
+        <button class="iconbtn" data-go="home">←</button>
+        <div>
+          <h2>Track Order</h2>
+          <span class="sub" id="orderId">#ORD1778480323355</span>
+        </div>
+        <span class="livepill">● LIVE</span>
+      </header>
+      <div class="body">
+        <div class="statuscard">🚚 Out for Delivery <span class="when">Today</span></div>
+        <div class="livebox">
+          <div class="lt">● LIVE TRACKING</div>
+          <div class="eta">🚚 Arriving in <span id="etaMin">13</span> minutes</div>
+          <div class="upd">Updated just now</div>
+          <div class="livebtns">
+            <button data-toast="Opening live map…">🗺️ Track on Map</button>
+            <button data-toast="Connecting to support…">🎧 Call Support</button>
+          </div>
+        </div>
+        <div class="infocard">
+          <div class="ic">🧑‍✈️</div>
+          <div>
+            <div class="lab">Delivery Driver</div>
+            <div class="val">Ravi Kumar</div>
+          </div>
+          <button class="callbtn" data-toast="Calling Ravi Kumar…">📞</button>
+        </div>
+        <div class="infocard">
+          <div class="ic">📍</div>
+          <div>
+            <div class="lab">Delivery Address</div>
+            <div class="val">Sholinganallur Site<small>—1/208 Dr. Ambedkar Nagar, Sholinganallur, Chennai 600119</small></div>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="tlh">Order Timeline</div>
+          <div class="tlitem"><div class="tldot"><div class="dot">✓</div><div class="line"></div></div>
+            <div class="tltext"><strong>Order Placed</strong><span>Reviewed by our team</span></div></div>
+          <div class="tlitem"><div class="tldot"><div class="dot">✓</div><div class="line"></div></div>
+            <div class="tltext"><strong>Order Accepted</strong><span>Packed at warehouse</span></div></div>
+          <div class="tlitem"><div class="tldot"><div class="dot">✓</div><div class="line"></div></div>
+            <div class="tltext"><strong>Ready for Dispatch</strong><span>Packed and ready</span></div></div>
+          <div class="tlitem"><div class="tldot"><div class="dot">✓</div><div class="line"></div></div>
+            <div class="tltext"><strong>Loading into Vehicle</strong><span>Being loaded for delivery</span></div></div>
+          <div class="tlitem"><div class="tldot"><div class="dot">✓</div><div class="line"></div></div>
+            <div class="tltext"><strong>Out for Delivery</strong><span>On the way to your site</span></div></div>
+          <div class="tlitem pending"><div class="tldot"><div class="dot">6</div><div class="line"></div></div>
+            <div class="tltext"><strong>Delivered</strong><span>Arriving shortly</span></div></div>
+        </div>
+      </div>
+      <nav class="botnav"></nav>
+    </section>
+
+  </div>
+
+  <div class="hint" id="hint">👆 Go ahead — tap around, it's live</div>
+  <div class="toast" id="toast"></div>
+
+  <div class="sheetwrap" id="sheetWrap">
+    <div class="sheet" id="sheet"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
+
+/* ---- live clock in status bar ---- */
+function tickClock(){
+  var d=new Date(),h=d.getHours(),m=d.getMinutes();
+  $('#clock').textContent=((h%12)||12)+':'+(m<10?'0':'')+m;
+}
+tickClock(); setInterval(tickClock,30000);
+
+/* ---- data ----
+   NOTE: prices below are representative placeholders for the demo.
+   Swap in the real price sheet before launch. */
+var PRODUCTS=[
+  /* Cement */
+  {id:'cem1',name:'UltraTech PPC Cement 50Kg',cat:'cement',price:290,unit:'bag',stock:true,e:'🧱'},
+  {id:'cem2',name:'Ramco Supergrade PPC Cement 50Kg',cat:'cement',price:280,unit:'bag',stock:true,e:'🧱'},
+  {id:'cem3',name:'Dalmia PPC Cement 50Kg',cat:'cement',price:270,unit:'bag',stock:true,e:'🧱'},
+  {id:'cem4',name:'JSW PPC Cement 50Kg',cat:'cement',price:280,unit:'bag',stock:false,e:'🧱'},
+  {id:'cem5',name:'Chettinad PPC Cement 50Kg',cat:'cement',price:275,unit:'bag',stock:true,e:'🧱'},
+  {id:'cem6',name:'Birla White Cement 1Kg',cat:'cement',price:40,unit:'pack',stock:true,e:'⚪'},
+  {id:'cem7',name:'Ramco Super Plaster 40Kg',cat:'cement',price:360,unit:'bag',stock:true,e:'🧱'},
+  {id:'cem8',name:'Ramco AAC Block Fix 40Kg',cat:'cement',price:340,unit:'bag',stock:true,e:'🧱'},
+  /* AAC Blocks & Bricks */
+  {id:'blk1',name:'Reenacon AAC Block 4 inch',cat:'blocks',price:42,unit:'block',stock:true,e:'🧊'},
+  {id:'blk2',name:'Reenacon AAC Block 6 inch',cat:'blocks',price:58,unit:'block',stock:true,e:'🧊'},
+  {id:'blk3',name:'Ekocon AAC Block 8 inch',cat:'blocks',price:75,unit:'block',stock:true,e:'🧊'},
+  {id:'blk4',name:'Ekocon AAC Block 9 inch',cat:'blocks',price:85,unit:'block',stock:true,e:'🧊'},
+  {id:'blk5',name:'Solid Cement Block 4 inch',cat:'blocks',price:32,unit:'block',stock:true,e:'🧱'},
+  {id:'blk6',name:'Solid Cement Block 6 inch',cat:'blocks',price:45,unit:'block',stock:true,e:'🧱'},
+  /* Steel */
+  {id:'stl1',name:'ARS TMT Rod 8mm',cat:'steel',price:62,unit:'Kg',stock:true,e:'🏗️',note:'Min. order 500 Kg'},
+  {id:'stl2',name:'ARS TMT Rod 10mm',cat:'steel',price:61,unit:'Kg',stock:true,e:'🏗️',note:'Min. order 500 Kg'},
+  {id:'stl3',name:'Isteel TMT Rod 12mm',cat:'steel',price:60,unit:'Kg',stock:true,e:'🏗️',note:'Min. order 500 Kg'},
+  {id:'stl4',name:'Arun TMT Rod 16mm',cat:'steel',price:60,unit:'Kg',stock:true,e:'🏗️',note:'Min. order 500 Kg'},
+  {id:'stl5',name:'ARS TMT Rod 20mm',cat:'steel',price:60,unit:'Kg',stock:false,e:'🏗️',note:'Min. order 500 Kg'},
+  {id:'stl6',name:'Tata Binding Wire 1Kg',cat:'steel',price:95,unit:'Kg',stock:true,e:'🪢'},
+  /* Sand & Aggregates */
+  {id:'agg1',name:'M-Sand',cat:'aggregates',price:1200,unit:'ton',stock:true,e:'⛏️'},
+  {id:'agg2',name:'P-Sand',cat:'aggregates',price:1350,unit:'ton',stock:true,e:'⛏️'},
+  {id:'agg3',name:'Stone Aggregate 20mm (Jally)',cat:'aggregates',price:1300,unit:'ton',stock:true,e:'🪨'},
+  {id:'agg4',name:'Stone Aggregate 40mm (Jally)',cat:'aggregates',price:1250,unit:'ton',stock:true,e:'🪨'},
+  /* Plumbing */
+  {id:'plm1',name:'Finolex PVC Pipe 1 inch (3m)',cat:'plumbing',price:240,unit:'pc',stock:true,e:'🚰'},
+  {id:'plm2',name:'Prince PVC Pipe 2 inch (3m)',cat:'plumbing',price:390,unit:'pc',stock:true,e:'🚰'},
+  {id:'plm3',name:'Ashirvad CPVC Pipe 3/4 inch (3m)',cat:'plumbing',price:310,unit:'pc',stock:true,e:'🚰'},
+  {id:'plm4',name:'Finolex UPVC Pipe 1 inch (3m)',cat:'plumbing',price:360,unit:'pc',stock:false,e:'🚰'},
+  {id:'plm5',name:'PVC Elbow Bend 1 inch',cat:'plumbing',price:18,unit:'pc',stock:true,e:'🔩'},
+  {id:'plm6',name:'Water Storage Tank 1000L',cat:'plumbing',price:6200,unit:'pc',stock:true,e:'🛢️'},
+  {id:'plm7',name:'Finolex CPVC Pipe 1 inch (3m)',cat:'plumbing',price:290,unit:'pc',stock:true,e:'🚰'},
+  /* Electrical */
+  {id:'elc1',name:'Orbit 1.5mm Wire (90m)',cat:'electrical',price:1150,unit:'roll',stock:true,e:'💡'},
+  {id:'elc2',name:'Polycab 2.5mm Wire (90m)',cat:'electrical',price:1980,unit:'roll',stock:true,e:'💡'},
+  {id:'elc3',name:'GM 3-Gang Modular Switch',cat:'electrical',price:190,unit:'pc',stock:true,e:'🔌'},
+  {id:'elc4',name:'Mount Plast Conduit Pipe 1 inch',cat:'electrical',price:95,unit:'pc',stock:true,e:'💡'},
+  {id:'elc5',name:'Anchor 16A MCB',cat:'electrical',price:240,unit:'pc',stock:true,e:'⚡'},
+  {id:'elc6',name:'Ellgee 8-Way DB Box',cat:'electrical',price:680,unit:'pc',stock:false,e:'⚡'},
+  /* Painting */
+  {id:'pnt1',name:'Asian Paints Royale Luxury Emulsion',cat:'painting',price:339,stock:true,e:'🎨',
+    variants:[{label:'1L',price:339,stock:6},{label:'4L',price:1290,stock:0},
+              {label:'10L',price:2960,stock:6},{label:'20L',price:5600,stock:0}]},
+  {id:'pnt2',name:'Birla Opus Interior Emulsion 1L',cat:'painting',price:330,unit:'L',stock:true,e:'🎨'},
+  {id:'pnt3',name:'Asian Paints TruCare Wall Putty 20Kg',cat:'painting',price:620,unit:'bag',stock:true,e:'🎨'},
+  {id:'pnt4',name:'Birla Wall Care Putty 40Kg',cat:'painting',price:780,unit:'bag',stock:true,e:'🎨'},
+  {id:'pnt5',name:'Asian Paints Wall Primer 1L',cat:'painting',price:220,unit:'L',stock:true,e:'🎨'},
+  {id:'pnt6',name:'Dr. Fixit Crack-X Paste 1Kg',cat:'painting',price:180,unit:'pc',stock:true,e:'🎨'},
+  {id:'pnt7',name:'Asian Paints Apex Weatherproof Exterior Emulsion 1L',cat:'painting',price:420,unit:'L',stock:true,e:'🎨'},
+  {id:'pnt8',name:'Asian Paints Tractor Emulsion 1L',cat:'painting',price:190,unit:'L',stock:true,e:'🎨'},
+  /* Waterproofing */
+  {id:'wtp1',name:'Dr. Fixit LW+ Waterproofing 1L',cat:'waterproofing',price:165,unit:'L',stock:true,e:'💧'},
+  {id:'wtp2',name:'Dr. Fixit Pidifin 2K Waterproof Coating',cat:'waterproofing',price:720,unit:'pack',stock:true,e:'💧'},
+  {id:'wtp3',name:'Fosroc Conplast WP200 5L',cat:'waterproofing',price:890,unit:'can',stock:true,e:'💧'},
+  {id:'wtp4',name:'Fosroc Primer Sealer 4L',cat:'waterproofing',price:1100,unit:'can',stock:false,e:'💧'},
+  /* Tiling */
+  {id:'til1',name:'MYK Tile Adhesive Type-1 20Kg',cat:'tiling',price:290,unit:'bag',stock:true,e:'🔳'},
+  {id:'til2',name:'MYK Tile Adhesive Type-3 20Kg',cat:'tiling',price:540,unit:'bag',stock:true,e:'🔳'},
+  {id:'til3',name:'MYK Epoxy Tile Grout 1Kg',cat:'tiling',price:120,unit:'pc',stock:true,e:'🔳'},
+  {id:'til4',name:'Tile Spacers 2mm (100 pcs)',cat:'tiling',price:60,unit:'pack',stock:true,e:'🔳'},
+  {id:'til5',name:'Aluminium Tile Trim 8mm',cat:'tiling',price:140,unit:'pc',stock:true,e:'🔳'},
+  /* Tools */
+  {id:'tol1',name:'Steel Claw Hammer 1Kg',cat:'tools',price:240,unit:'pc',stock:true,e:'🔨'},
+  {id:'tol2',name:'Mason Brick Trowel 8 inch',cat:'tools',price:180,unit:'pc',stock:true,e:'🛠️'},
+  {id:'tol3',name:'Spirit Level 24 inch',cat:'tools',price:420,unit:'pc',stock:true,e:'📏'},
+  {id:'tol4',name:'Line Voltage Tester',cat:'tools',price:45,unit:'pc',stock:true,e:'🛠️'},
+  {id:'tol5',name:'VIKI Paint Roller 9 inch',cat:'tools',price:120,unit:'pc',stock:true,e:'🖌️'},
+  {id:'tol6',name:'VIKI Paint Brush 3 inch',cat:'tools',price:65,unit:'pc',stock:true,e:'🖌️'},
+  {id:'tol7',name:'CUMI Cutting Wheel 4 inch',cat:'tools',price:85,unit:'pc',stock:true,e:'🪚'},
+  /* Hardware */
+  {id:'hrd1',name:'PTA Drywall Screws (100 pcs)',cat:'hardware',price:85,unit:'pack',stock:true,e:'🔩'},
+  {id:'hrd2',name:'Concrete Nails 3 inch 1Kg',cat:'hardware',price:95,unit:'Kg',stock:true,e:'🔩'},
+  {id:'hrd3',name:'Tarpaulin Sheet 12x15 ft',cat:'hardware',price:480,unit:'pc',stock:true,e:'🟦'},
+  {id:'hrd4',name:'Brown Packing Tape (6 pcs)',cat:'hardware',price:180,unit:'pack',stock:true,e:'📦'},
+  {id:'hrd5',name:'Coir Rope 6mm 1Kg',cat:'hardware',price:110,unit:'Kg',stock:true,e:'🪢'},
+  {id:'hrd6',name:'Chicken Wire Mesh (roll)',cat:'hardware',price:620,unit:'roll',stock:true,e:'🔩'}
+];
+var CAT_LABEL={cement:'Cement',blocks:'AAC Blocks',steel:'TMT Steel',
+  aggregates:'Sand & Aggregates',plumbing:'Plumbing',electrical:'Electrical',
+  painting:'Painting',waterproofing:'Waterproofing',tiling:'Tiling',
+  tools:'Tools',hardware:'Hardware'};
+var CATEGORIES=[
+  {key:'cement',e:'🧱',name:'Cement'},{key:'blocks',e:'🧊',name:'AAC Blocks'},
+  {key:'steel',e:'🏗️',name:'TMT Steel'},{key:'aggregates',e:'⛏️',name:'Aggregates'},
+  {key:'plumbing',e:'🚰',name:'Plumbing'},{key:'electrical',e:'💡',name:'Electrical'},
+  {key:'painting',e:'🎨',name:'Painting'},{key:'waterproofing',e:'💧',name:'Waterproof'},
+  {key:'tiling',e:'🔳',name:'Tiling'},{key:'tools',e:'🛠️',name:'Tools'},
+  {key:'hardware',e:'🔩',name:'Hardware'}
+];
+var POPULAR=['TMT Steel','PPC Cement','AAC Blocks','M-Sand','PVC Pipes',
+  'Wall Putty','Tile Adhesive','Waterproofing','Binding Wire','Paint'];
+
+/* cart pre-seeded so Cart & Track always have content */
+var cart=[
+  {key:'cem1',id:'cem1',name:'UltraTech PPC Cement 50Kg',variant:'',price:420,qty:10,e:'🧱'},
+  {key:'til1',id:'til1',name:'MYK Tile Adhesive Type-1 20Kg',variant:'',price:290,qty:6,e:'🔳'}
+];
+var currentQuery='';
+
+/* ---- helpers ---- */
+function cartCount(){return cart.reduce(function(n,l){return n+l.qty;},0);}
+function cartTotal(){return cart.reduce(function(n,l){return n+l.price*l.qty;},0);}
+function rupee(n){return '₹'+n.toLocaleString('en-IN');}
+function findLine(key){for(var i=0;i<cart.length;i++){if(cart[i].key===key)return cart[i];}return null;}
+/* product thumbnail: real image if present in assets/products/, else emoji fallback */
+function thumb(id,emoji){
+  return '<img class="thumb-img" src="assets/products/'+id+'.jpg" alt="" loading="lazy" '+
+         'onerror="this.remove()"><span class="thumb-e">'+emoji+'</span>';
+}
+function updateBadges(){
+  var c=cartCount();
+  $$('[data-badge]').forEach(function(b){b.textContent=c;b.style.display=c?'grid':'none';});
+}
+
+/* ---- toast ---- */
+var toastT;
+function toast(msg){
+  var t=$('#toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},1900);
+}
+
+/* ---- bottom nav (shared) ---- */
+function buildNav(){
+  var items=[['home','🏠','Home'],['track','📋','Orders'],['cart','🛒','Cart'],['account','👤','Account']];
+  $$('.botnav').forEach(function(nav){
+    var screen=nav.parentElement.dataset.screen;
+    nav.innerHTML=items.map(function(it){
+      var on=(it[0]===screen)?' on':'';
+      return '<button class="navitem'+on+'" data-go="'+it[0]+'">'+
+             '<span class="ni">'+it[1]+'</span>'+it[2]+'</button>';
+    }).join('');
+  });
+}
+
+/* ---- screen routing ---- */
+var current='home';
+function showScreen(name){
+  if(name==='account'){toast('Account — coming soon');return;}
+  $$('.screen').forEach(function(s){s.classList.toggle('active',s.dataset.screen===name);});
+  current=name;
+  buildNav();updateBadges();
+  if(name==='search')renderSearchBody();
+  if(name==='cart')renderCart();
+  $('#hint').classList.add('gone');
+}
+
+/* ---- home category grid ---- */
+function renderCats(){
+  $('#catGrid').innerHTML=CATEGORIES.map(function(c){
+    return '<button class="catcard" data-cat="'+c.key+'">'+
+      '<div class="ce">'+c.e+'</div><div class="cn">'+c.name+'</div></button>';
+  }).join('');
+}
+
+/* ---- search ---- */
+function renderSearchBody(){
+  var body=$('#searchBody');
+  var q=currentQuery.trim().toLowerCase();
+  if(!q){
+    body.innerHTML='<div class="kicker">Popular Searches</div><div class="chips">'+
+      POPULAR.map(function(p){return '<button class="chip" data-chip="'+p+'"><span class="tr">📈</span>'+p+'</button>';}).join('')+
+      '</div>';
+    return;
+  }
+  var tokens=q.split(/\s+/).filter(function(w){return w.length>=3;});
+  if(!tokens.length)tokens=[q];
+  var results=PRODUCTS.filter(function(p){
+    var hay=(p.name+' '+p.cat).toLowerCase();
+    return tokens.some(function(t){return hay.indexOf(t)>-1;});
+  });
+  if(!results.length){
+    body.innerHTML='<div class="emptxt">No results for "'+currentQuery+'".<br>Try cement, steel, paint or pipes.</div>';
+    return;
+  }
+  body.innerHTML='<div class="kicker">'+results.length+' result'+(results.length>1?'s':'')+'</div>'+
+    results.map(rowHTML).join('');
+}
+function rowHTML(p){
+  var price='<div class="pprice">'+rupee(p.price)+
+    (p.variants?' <span class="punit">onwards</span>':
+      (p.unit?' <span class="punit">/ '+p.unit+'</span>':''))+'</div>';
+  return '<div class="prow'+(p.stock?'':' oos')+'" data-pid="'+p.id+'">'+
+    '<div class="pthumb">'+thumb(p.id,p.e)+'</div>'+
+    '<div class="pinfo">'+
+      '<div class="pkick">'+(CAT_LABEL[p.cat]||p.cat)+'</div>'+
+      '<div class="pname">'+p.name+'</div>'+price+
+      (p.note?'<div class="pnote">⚠ '+p.note+'</div>':'')+
+    '</div>'+
+    '<div class="padd">'+addControl(p)+'</div></div>';
+}
+function addControl(p){
+  if(!p.stock)return '<span class="oospill">No stock</span>';
+  if(p.variants)return '<button class="addbtn ghost" data-variant="'+p.id+'">Select</button>';
+  var line=findLine(p.id);
+  if(line)return stepperHTML(p.id,line.qty);
+  return '<button class="addbtn" data-add="'+p.id+'">ADD</button>';
+}
+function stepperHTML(key,qty){
+  return '<div class="stepper"><button data-dec="'+key+'">−</button>'+
+    '<span>'+qty+'</span><button data-inc="'+key+'">+</button></div>';
+}
+
+/* ---- cart mutations ---- */
+function addToCart(p,variant){
+  var key=p.id+(variant?'::'+variant.label:'');
+  var line=findLine(key);
+  if(line){line.qty++;}
+  else{cart.push({key:key,id:p.id,name:p.name,variant:variant?variant.label:'',
+    price:variant?variant.price:p.price,qty:1,e:p.e});}
+  updateBadges();
+  toast(p.name.split(' ').slice(0,3).join(' ')+' added');
+}
+function changeQty(key,delta){
+  var line=findLine(key);if(!line)return;
+  line.qty+=delta;
+  if(line.qty<=0)cart=cart.filter(function(l){return l.key!==key;});
+  updateBadges();
+}
+function renderCart(){
+  var body=$('#cartBody'),bar=$('#checkoutBar');
+  if(!cart.length){
+    body.innerHTML='<div class="emptxt">🛒<br><br>Your cart is empty.<br>Add some materials to get started.</div>'+
+      '<button class="bigbtn full" data-go="search" style="margin-top:8px;">Browse products</button>';
+    bar.style.display='none';
+    return;
+  }
+  bar.style.display='flex';
+  body.innerHTML=cart.map(function(l){
+    return '<div class="crow">'+
+      '<div class="pthumb">'+thumb(l.id,l.e)+'</div>'+
+      '<div class="pinfo">'+
+        '<div class="pname">'+l.name+'</div>'+
+        (l.variant?'<div class="pvar">Size: '+l.variant+'</div>':'')+
+        '<div class="pprice">'+rupee(l.price)+'</div>'+
+      '</div>'+stepperHTML(l.key,l.qty)+'</div>';
+  }).join('')+
+  '<div class="billcard">'+
+    '<div class="billrow"><span>Item total</span><span>'+rupee(cartTotal())+'</span></div>'+
+    '<div class="billrow"><span>Delivery fee</span><span class="free">FREE</span></div>'+
+    '<div class="billrow"><span>Site delivery</span><span>Within 60 min</span></div>'+
+    '<div class="billrow total"><span>To pay</span><span>'+rupee(cartTotal())+'</span></div>'+
+  '</div>';
+  bar.innerHTML='<div class="ctot"><small>TOTAL</small><strong>'+rupee(cartTotal())+'</strong></div>'+
+    '<button class="bigbtn" data-place>Place Order</button>';
+  updateBadges();
+}
+
+/* ---- variant sheet ---- */
+function openSheet(p){
+  var sheet=$('#sheet');
+  sheet.innerHTML='<div class="sheet-head"><div>'+
+    '<h3>'+p.name+'</h3><div class="sk">Select size / unit</div></div>'+
+    '<button class="sheet-x" id="sheetX">✕</button></div>'+
+    p.variants.map(function(v){
+      var oos=v.stock<=0;
+      return '<div class="varopt'+(oos?' oos':'')+'" '+(oos?'':'data-pickvar="'+v.label+'"')+'>'+
+        '<div><div class="vl">'+v.label+'</div>'+
+        '<div class="vs">'+(oos?'No stock':'In stock: '+v.stock)+'</div></div>'+
+        '<div class="vp">'+rupee(v.price)+'</div></div>';
+    }).join('');
+  sheet.dataset.pid=p.id;
+  $('#sheetWrap').classList.add('show');
+}
+function closeSheet(){$('#sheetWrap').classList.remove('show');}
+
+/* ---- place order ---- */
+function placeOrder(){
+  var id='ORD'+String(Date.now()).slice(-13);
+  $('#orderId').textContent='#'+id;
+  $('#etaMin').textContent='13';
+  showScreen('track');
+  toast('Order placed! Delivering in 60 min');
+}
+
+/* ---- eta countdown on track screen ---- */
+setInterval(function(){
+  if(current!=='track')return;
+  var el=$('#etaMin');var n=parseInt(el.textContent,10);
+  if(n>2){el.textContent=n-1;}
+},14000);
+
+/* ============ events ============ */
+buildNav();updateBadges();renderCats();renderSearchBody();
+
+$('#app').addEventListener('click',function(e){
+  var t=e.target.closest('[data-go],[data-cat],[data-chip],[data-add],[data-variant],'+
+    '[data-inc],[data-dec],[data-pickvar],[data-place],[data-toast]');
+  if(!t)return;
+
+  if(t.dataset.go){showScreen(t.dataset.go);return;}
+
+  if(t.dataset.cat){
+    currentQuery=CAT_LABEL[t.dataset.cat]||t.dataset.cat;
+    $('#searchInput').value=currentQuery;
+    showScreen('search');return;
+  }
+  if(t.dataset.chip){
+    currentQuery=t.dataset.chip;
+    $('#searchInput').value=currentQuery;
+    renderSearchBody();return;
+  }
+  if(t.dataset.add){
+    var pa=PRODUCTS.filter(function(p){return p.id===t.dataset.add;})[0];
+    if(pa){addToCart(pa);renderSearchBody();}
+    return;
+  }
+  if(t.dataset.variant){
+    var pv=PRODUCTS.filter(function(p){return p.id===t.dataset.variant;})[0];
+    if(pv)openSheet(pv);
+    return;
+  }
+  if(t.dataset.pickvar){
+    var pid=$('#sheet').dataset.pid;
+    var pp=PRODUCTS.filter(function(p){return p.id===pid;})[0];
+    var vv=pp.variants.filter(function(v){return v.label===t.dataset.pickvar;})[0];
+    addToCart(pp,vv);closeSheet();renderSearchBody();
+    return;
+  }
+  if(t.dataset.inc){changeQty(t.dataset.inc,1);refreshAfterQty();return;}
+  if(t.dataset.dec){changeQty(t.dataset.dec,-1);refreshAfterQty();return;}
+  if(t.hasAttribute('data-place')){placeOrder();return;}
+  if(t.dataset.toast){toast(t.dataset.toast);return;}
+});
+
+function refreshAfterQty(){
+  if(current==='cart')renderCart();
+  if(current==='search')renderSearchBody();
+}
+
+/* close sheet */
+$('#sheetWrap').addEventListener('click',function(e){
+  if(e.target.id==='sheetWrap'||e.target.id==='sheetX')closeSheet();
+});
+
+/* search typing */
+$('#searchInput').addEventListener('input',function(e){
+  currentQuery=e.target.value;renderSearchBody();
+});
+$('#clearSearch').addEventListener('click',function(){
+  currentQuery='';$('#searchInput').value='';renderSearchBody();$('#searchInput').focus();
+});
+
+/* hide hint after first interaction */
+setTimeout(function(){$('#hint').classList.add('gone');},5200);
+
+/* ---- listen to landing page (guided tour via postMessage) ---- */
+window.addEventListener('message',function(e){
+  var d=e.data;
+  if(!d||d.suppliable!==true)return;
+  if(d.action==='goto'){
+    if(d.query!=null){currentQuery=d.query;$('#searchInput').value=d.query;}
+    closeSheet();
+    showScreen(d.screen||'home');
+  }
+});
+})();
+</script>
+</body>
+</html>

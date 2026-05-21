@@ -1,0 +1,71 @@
+SUPPLIABLE — product image filenames
+Drop a square image (recommended 600x600 .jpg) for each product into this folder.
+Filename must match the product id exactly. Missing images fall back to an icon.
+
+cem1.jpg  —  UltraTech PPC Cement 50Kg
+cem2.jpg  —  Ramco Supergrade PPC Cement 50Kg
+cem3.jpg  —  Dalmia PPC Cement 50Kg
+cem4.jpg  —  JSW PPC Cement 50Kg
+cem5.jpg  —  Chettinad PPC Cement 50Kg
+cem6.jpg  —  Birla White Cement 1Kg
+cem7.jpg  —  Ramco Super Plaster 40Kg
+cem8.jpg  —  Ramco AAC Block Fix 40Kg
+blk1.jpg  —  Reenacon AAC Block 4 inch
+blk2.jpg  —  Reenacon AAC Block 6 inch
+blk3.jpg  —  Ekocon AAC Block 8 inch
+blk4.jpg  —  Ekocon AAC Block 9 inch
+blk5.jpg  —  Solid Cement Block 4 inch
+blk6.jpg  —  Solid Cement Block 6 inch
+stl1.jpg  —  ARS TMT Rod 8mm
+stl2.jpg  —  ARS TMT Rod 10mm
+stl3.jpg  —  Isteel TMT Rod 12mm
+stl4.jpg  —  Arun TMT Rod 16mm
+stl5.jpg  —  ARS TMT Rod 20mm
+stl6.jpg  —  Tata Binding Wire 1Kg
+agg1.jpg  —  M-Sand
+agg2.jpg  —  P-Sand
+agg3.jpg  —  Stone Aggregate 20mm (Jally)
+agg4.jpg  —  Stone Aggregate 40mm (Jally)
+plm1.jpg  —  Finolex PVC Pipe 1 inch (3m)
+plm2.jpg  —  Prince PVC Pipe 2 inch (3m)
+plm3.jpg  —  Ashirvad CPVC Pipe 3/4 inch (3m)
+plm4.jpg  —  Finolex UPVC Pipe 1 inch (3m)
+plm5.jpg  —  PVC Elbow Bend 1 inch
+plm6.jpg  —  Water Storage Tank 1000L
+plm7.jpg  —  Finolex CPVC Pipe 1 inch (3m)
+elc1.jpg  —  Orbit 1.5mm Wire (90m)
+elc2.jpg  —  Polycab 2.5mm Wire (90m)
+elc3.jpg  —  GM 3-Gang Modular Switch
+elc4.jpg  —  Mount Plast Conduit Pipe 1 inch
+elc5.jpg  —  Anchor 16A MCB
+elc6.jpg  —  Ellgee 8-Way DB Box
+pnt1.jpg  —  Asian Paints Royale Luxury Emulsion
+pnt2.jpg  —  Birla Opus Interior Emulsion 1L
+pnt3.jpg  —  Asian Paints TruCare Wall Putty 20Kg
+pnt4.jpg  —  Birla Wall Care Putty 40Kg
+pnt5.jpg  —  Asian Paints Wall Primer 1L
+pnt6.jpg  —  Dr. Fixit Crack-X Paste 1Kg
+pnt7.jpg  —  Asian Paints Apex Weatherproof Exterior Emulsion 1L
+pnt8.jpg  —  Asian Paints Tractor Emulsion 1L
+wtp1.jpg  —  Dr. Fixit LW+ Waterproofing 1L
+wtp2.jpg  —  Dr. Fixit Pidifin 2K Waterproof Coating
+wtp3.jpg  —  Fosroc Conplast WP200 5L
+wtp4.jpg  —  Fosroc Primer Sealer 4L
+til1.jpg  —  MYK Tile Adhesive Type-1 20Kg
+til2.jpg  —  MYK Tile Adhesive Type-3 20Kg
+til3.jpg  —  MYK Epoxy Tile Grout 1Kg
+til4.jpg  —  Tile Spacers 2mm (100 pcs)
+til5.jpg  —  Aluminium Tile Trim 8mm
+tol1.jpg  —  Steel Claw Hammer 1Kg
+tol2.jpg  —  Mason Brick Trowel 8 inch
+tol3.jpg  —  Spirit Level 24 inch
+tol4.jpg  —  Line Voltage Tester
+tol5.jpg  —  VIKI Paint Roller 9 inch
+tol6.jpg  —  VIKI Paint Brush 3 inch
+tol7.jpg  —  CUMI Cutting Wheel 4 inch
+hrd1.jpg  —  PTA Drywall Screws (100 pcs)
+hrd2.jpg  —  Concrete Nails 3 inch 1Kg
+hrd3.jpg  —  Tarpaulin Sheet 12x15 ft
+hrd4.jpg  —  Brown Packing Tape (6 pcs)
+hrd5.jpg  —  Coir Rope 6mm 1Kg
+hrd6.jpg  —  Chicken Wire Mesh (roll)
