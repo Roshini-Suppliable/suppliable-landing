@@ -8,6 +8,55 @@
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  /* ---- Clean hash URLs (smooth-scroll then strip the # from the address bar)
+     Anchor links like <a href="#how"> or <a href="/#how"> keep working — but
+     after navigation the URL shows as "/" instead of "/#how". ---- */
+  function smoothScrollTo(el) {
+    if (!el) return;
+    var top = el.getBoundingClientRect().top + window.pageYOffset - 8;
+    if ('scrollBehavior' in document.documentElement.style) {
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    } else {
+      window.scrollTo(0, top);
+    }
+  }
+  function cleanHashFromURL() {
+    if (window.location.hash && history.replaceState) {
+      var clean = window.location.pathname + window.location.search;
+      history.replaceState(null, '', clean);
+    }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href');
+    /* Only intercept in-page anchors: "#foo" or "/#foo" or current-path "#foo" */
+    var hashIdx = href.indexOf('#');
+    if (hashIdx === -1) return;
+    var beforeHash = href.slice(0, hashIdx);
+    var isSamePage = beforeHash === '' || beforeHash === '/' || beforeHash === window.location.pathname;
+    if (!isSamePage) return;
+    var id = href.slice(hashIdx + 1);
+    if (!id) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    smoothScrollTo(target);
+    cleanHashFromURL();
+  });
+  /* If the page loads with a hash (e.g. user came from /privacypolicy/#how),
+     scroll to the section then wipe the hash from the URL. */
+  if (window.location.hash) {
+    var initialTarget = document.getElementById(window.location.hash.slice(1));
+    if (initialTarget) {
+      /* let layout settle */
+      setTimeout(function () {
+        smoothScrollTo(initialTarget);
+        cleanHashFromURL();
+      }, 50);
+    }
+  }
+
   /* ---- Header shadow on scroll ---- */
   var header = document.getElementById('siteHeader');
   function onScroll() {
