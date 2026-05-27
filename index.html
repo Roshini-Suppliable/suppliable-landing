@@ -100,7 +100,7 @@
 
       <nav class="nav" id="primaryNav" aria-label="Primary">
         <a href="#how">How it works</a>
-        <a href="#categories">Categories</a>
+        <a href="/products/">Products</a>
         <a href="#brands">Brands</a>
         <a href="#bulk">Bulk orders</a>
       </nav>
@@ -199,66 +199,19 @@
           <h2>Everything a site needs.</h2>
         </div>
 
-        <div class="cat-grid">
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🧱</span>
-            <h3>Cement</h3>
-            <p>UltraTech · Ramco · Dalmia · JSW</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🧊</span>
-            <h3>AAC Blocks</h3>
-            <p>Reenacon · Ekocon</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🏗️</span>
-            <h3>TMT Steel</h3>
-            <p>ARS · Isteel · Arun · Tata</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">⛏️</span>
-            <h3>Sand &amp; Aggregates</h3>
-            <p>M-Sand · P-Sand · Jally</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🚰</span>
-            <h3>Plumbing</h3>
-            <p>Finolex · Prince · Ashirvad</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">💡</span>
-            <h3>Electrical</h3>
-            <p>Orbit · Polycab · Anchor</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🎨</span>
-            <h3>Painting</h3>
-            <p>Asian Paints · Birla Opus</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">💧</span>
-            <h3>Waterproofing</h3>
-            <p>Dr. Fixit · Fosroc</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🔳</span>
-            <h3>Tiling</h3>
-            <p>MYK · Spacers · Trims</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🛠️</span>
-            <h3>Tools</h3>
-            <p>VIKI · Hand &amp; Power tools</p>
-          </a>
-          <a href="#download" class="cat-card">
-            <span class="cat-emoji">🔩</span>
-            <h3>Hardware</h3>
-            <p>PTA · Tapes · Nails · Mesh</p>
-          </a>
-          <a href="#download" class="cat-card cat-cta">
+        <div class="cat-grid" id="catGridLanding" data-loading="true">
+          <!-- Categories are populated from the API by js/categories.js.
+               The cards below are a static fallback shown if JS or the API fails. -->
+          <a href="/products/?category=plumbing" class="cat-card"><span class="cat-emoji">🚰</span><h3>Plumbing</h3><p>Browse products</p></a>
+          <a href="/products/?category=electrical" class="cat-card"><span class="cat-emoji">💡</span><h3>Electrical</h3><p>Browse products</p></a>
+          <a href="/products/?category=painting" class="cat-card"><span class="cat-emoji">🎨</span><h3>Painting</h3><p>Browse products</p></a>
+          <a href="/products/?category=tiling" class="cat-card"><span class="cat-emoji">🔳</span><h3>Tiling</h3><p>Browse products</p></a>
+          <a href="/products/?category=hardwares" class="cat-card"><span class="cat-emoji">🔩</span><h3>Hardware</h3><p>Browse products</p></a>
+          <a href="/products/?category=bathroom_fittings" class="cat-card"><span class="cat-emoji">🚿</span><h3>Bathroom Fittings</h3><p>Browse products</p></a>
+          <a href="/products/" class="cat-card cat-cta">
             <span class="cat-emoji">➕</span>
-            <h3>1,000+ more</h3>
-            <p>See the full range in the app</p>
+            <h3>See all</h3>
+            <p>Browse the full catalogue</p>
           </a>
         </div>
       </div>
@@ -414,7 +367,7 @@
       <div class="footer-col">
         <h4>Explore</h4>
         <a href="#how">How it works</a>
-        <a href="#categories">Categories</a>
+        <a href="/products/">Products</a>
         <a href="#brands">Brands</a>
         <a href="#bulk">Bulk orders</a>
         <a href="#download">Download app</a>
@@ -449,5 +402,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/categories.js"></script>
 </body>
 </html>
