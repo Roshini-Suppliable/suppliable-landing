@@ -150,24 +150,64 @@
       margin-top: 4px;
     }
     .product-price .unit { font-size: .8rem; color: var(--muted, #6B6880); font-weight: 600; }
-    .product-actions {
-      display: flex; gap: 6px; margin-top: 10px;
+
+    /* variant disclosure */
+    .product-variants {
+      margin-top: 10px;
+      border-top: 1px dashed var(--line, #E7E5F1);
+      padding-top: 10px;
     }
-    .product-actions .wa-btn {
-      flex: 1;
-      background: #25D366;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 9px 0;
-      font-weight: 700; font-size: .85rem;
+    .product-variants > summary {
+      list-style: none;
       cursor: pointer;
-      text-decoration: none;
-      text-align: center;
-      transition: background .15s;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--purple);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+      user-select: none;
     }
-    .product-actions .wa-btn:hover { background: #1eb854; }
-    .product-actions .wa-btn.disabled { background: #ccc; pointer-events: none; }
+    .product-variants > summary::-webkit-details-marker { display: none; }
+    .product-variants > summary::after {
+      content: '▾';
+      margin-left: auto;
+      transition: transform .2s;
+      font-size: .75rem;
+    }
+    .product-variants[open] > summary::after { transform: rotate(180deg); }
+    .product-variants ul {
+      list-style: none;
+      padding: 8px 0 2px;
+      margin: 0;
+    }
+    .product-variants li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--line, #E7E5F1);
+      font-size: .85rem;
+    }
+    .product-variants li:last-child { border-bottom: none; }
+    .product-variants .v-label {
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .product-variants .v-meta {
+      font-size: .72rem;
+      color: var(--muted, #6B6880);
+      font-weight: 600;
+      margin-left: 4px;
+    }
+    .product-variants .v-meta.oos { color: #d33; }
+    .product-variants .v-price {
+      font-weight: 800;
+      color: var(--ink);
+      white-space: nowrap;
+    }
 
     /* states */
     .state-msg {
@@ -331,11 +371,26 @@
         return rupee(p.price) + (p.unit ? ' <span class="unit">/ ' + escapeHTML(p.unit) + '</span>' : '');
       }
 
-      function whatsappLink(p) {
-        var msg = "Hi Suppliable, I'm interested in:\n\n*" + p.name + "*";
-        if (p.brand && p.brand !== p.name) msg += '\nBrand: ' + p.brand;
-        msg += '\nFrom: ' + window.location.href;
-        return 'https://wa.me/918778627926?text=' + encodeURIComponent(msg);
+      function variantsHTML(p) {
+        if (!p.hasVariants || !p.variants || !p.variants.length) return '';
+        var n = p.variants.length;
+        var items = p.variants.map(function (v) {
+          var meta = v.stock
+            ? '<span class="v-meta">in stock</span>'
+            : '<span class="v-meta oos">out of stock</span>';
+          return (
+            '<li>' +
+              '<span><span class="v-label">' + escapeHTML(v.label) + '</span>' + meta + '</span>' +
+              '<span class="v-price">' + rupee(v.price) + '</span>' +
+            '</li>'
+          );
+        }).join('');
+        return (
+          '<details class="product-variants">' +
+            '<summary>View ' + n + ' option' + (n === 1 ? '' : 's') + '</summary>' +
+            '<ul>' + items + '</ul>' +
+          '</details>'
+        );
       }
 
       function productCard(p) {
@@ -350,10 +405,6 @@
           ? '<span class="product-stock-pill in-stock">In stock</span>'
           : '<span class="product-stock-pill">Out of stock</span>';
 
-        var waBtn = p.stock
-          ? '<a href="' + whatsappLink(p) + '" target="_blank" rel="noopener" class="wa-btn">💬 Order on WhatsApp</a>'
-          : '<a href="' + whatsappLink(p) + '" target="_blank" rel="noopener" class="wa-btn">💬 Enquire</a>';
-
         return (
           '<article class="product-card">' +
             '<div class="product-img">' + imgPart + stockPill + '</div>' +
@@ -361,7 +412,7 @@
               '<div class="product-cat">' + escapeHTML(p.cat) + '</div>' +
               '<div class="product-name">' + escapeHTML(p.name) + '</div>' +
               '<div class="product-price">' + priceHTML(p) + '</div>' +
-              '<div class="product-actions">' + waBtn + '</div>' +
+              variantsHTML(p) +
             '</div>' +
           '</article>'
         );
