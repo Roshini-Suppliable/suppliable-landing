@@ -43,7 +43,35 @@
 .breadcrumb .sep { opacity: .5; margin: 0 4px; }
 .breadcrumb [aria-current] { color: #fff; font-weight: 700; }
 
+
+/* horizontal category chip rail (in hero, for category switching) */
+.cat-chips {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 18px 0 4px; margin: 0 -4px;
+  scrollbar-width: none; -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+.cat-chips::-webkit-scrollbar { display: none; }
+.cat-chip {
+  flex-shrink: 0; background: rgba(255,255,255,.12); color: #fff;
+  border: 1.5px solid rgba(255,255,255,.3);
+  padding: 8px 14px; border-radius: 999px;
+  font-weight: 600; font-size: .88rem; text-decoration: none;
+  transition: background .15s, border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.cat-chip:hover { background: rgba(255,255,255,.22); border-color: rgba(255,255,255,.5); }
+.cat-chip.active { background: #fff; color: var(--purple); border-color: #fff; }
+
 .legal-page { background: var(--mist, #F4F3F9); padding: 40px 0 80px; min-height: 60vh; }
+
+/* button overrides for light-bg pages */
+.btn-wa {
+  background: #25D366; color: #fff; border-color: var(--ink);
+  box-shadow: var(--shadow-hard);
+}
+.btn-wa:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--ink); background: #1eb854; }
+.btn-wa:active { transform: translate(2px,2px); box-shadow: 3px 3px 0 var(--ink); }
 
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 @media (min-width: 700px) { .products-grid { gap: 20px; } }
@@ -181,7 +209,7 @@
       </div>
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
           <a href="/#download" class="btn btn-orange">Order on the app</a>
-          <a href="https://wa.me/918778627926?text=Hi%20Suppliable%2C%20I'd%20like%20to%20buy%3A%20Polish%20Powder%20250gms%0AFrom%3A%20https%3A%2F%2Fwww.suppliable.in%2Fproducts%2Fpainting%2Fpolish-powder-250gms%2F" target="_blank" rel="noopener" class="btn btn-ghost-light">💬 Ask on WhatsApp</a>
+          <a href="https://wa.me/918778627926?text=Hi%20Suppliable%2C%20I'd%20like%20to%20buy%3A%20Polish%20Powder%20250gms%0AFrom%3A%20https%3A%2F%2Fwww.suppliable.in%2Fproducts%2Fpainting%2Fpolish-powder-250gms%2F" target="_blank" rel="noopener" class="btn btn-wa">💬 Ask on WhatsApp</a>
         </div>
       </div>
     </div>

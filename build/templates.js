@@ -154,7 +154,35 @@ const PAGE_STYLES = `
 .back-link { display: inline-block; margin-bottom: 8px; color: #fff; opacity: .85; font-weight: 600; text-decoration: none; font-size: .92rem; }
 .back-link:hover { opacity: 1; text-decoration: underline; }
 ${BREADCRUMB_CSS}
+
+/* horizontal category chip rail (in hero, for category switching) */
+.cat-chips {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 18px 0 4px; margin: 0 -4px;
+  scrollbar-width: none; -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+.cat-chips::-webkit-scrollbar { display: none; }
+.cat-chip {
+  flex-shrink: 0; background: rgba(255,255,255,.12); color: #fff;
+  border: 1.5px solid rgba(255,255,255,.3);
+  padding: 8px 14px; border-radius: 999px;
+  font-weight: 600; font-size: .88rem; text-decoration: none;
+  transition: background .15s, border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.cat-chip:hover { background: rgba(255,255,255,.22); border-color: rgba(255,255,255,.5); }
+.cat-chip.active { background: #fff; color: var(--purple); border-color: #fff; }
+
 .legal-page { background: var(--mist, #F4F3F9); padding: 40px 0 80px; min-height: 60vh; }
+
+/* button overrides for light-bg pages */
+.btn-wa {
+  background: #25D366; color: #fff; border-color: var(--ink);
+  box-shadow: var(--shadow-hard);
+}
+.btn-wa:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--ink); background: #1eb854; }
+.btn-wa:active { transform: translate(2px,2px); box-shadow: 3px 3px 0 var(--ink); }
 
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 @media (min-width: 700px) { .products-grid { gap: 20px; } }
@@ -178,15 +206,6 @@ ${BREADCRUMB_CSS}
 .app-banner-text strong { font-size: 1.15rem; display: block; }
 .app-banner-text p { opacity: .9; font-size: .9rem; margin-top: 4px; }
 .app-banner .btn { white-space: nowrap; position: relative; z-index: 1; }
-`;
-
-const CATEGORY_LIST_CSS = `
-.cat-list-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-.cat-link-card { background: #fff; border: 1.5px solid var(--line, #E7E5F1); border-radius: 12px; padding: 18px 16px; text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 12px; transition: border-color .15s, transform .15s; }
-.cat-link-card:hover { border-color: var(--purple); transform: translateY(-1px); }
-.cat-link-card .e { font-size: 26px; }
-.cat-link-card .n { font-weight: 700; }
-.cat-link-card .c { font-size: .8rem; color: var(--muted, #6B6880); margin-top: 2px; }
 `;
 
 const PRODUCT_DETAIL_CSS = `
@@ -358,7 +377,7 @@ ${header()}
         ${variantsBlock}
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
           <a href="/#download" class="btn btn-orange">Order on the app</a>
-          <a href="${whatsappLink(`Hi Suppliable, I'd like to buy: ${product.name}\nFrom: ${url}`)}" target="_blank" rel="noopener" class="btn btn-ghost-light">💬 Ask on WhatsApp</a>
+          <a href="${whatsappLink(`Hi Suppliable, I'd like to buy: ${product.name}\nFrom: ${url}`)}" target="_blank" rel="noopener" class="btn btn-wa">💬 Ask on WhatsApp</a>
         </div>
       </div>
     </div>
@@ -397,6 +416,14 @@ export function categoryPage({ category, products, allCategories }) {
     }))
   };
 
+  const chipsHTML = `
+    <div class="cat-chips" aria-label="Browse categories">
+      <a href="/products/" class="cat-chip">All</a>
+      ${allCategories.map(c =>
+        `<a href="/products/${c.slug}/" class="cat-chip${c.slug === category.slug ? ' active' : ''}">${c.e} ${escapeHTML(c.name)}</a>`
+      ).join('')}
+    </div>`;
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>${commonHead({ title, description, canonical: url })}
@@ -412,6 +439,7 @@ ${header()}
     ${breadcrumbHTML(breadcrumbs)}
     <h1>${escapeHTML(category.name)}</h1>
     <p class="sub">${products.length} ${category.name.toLowerCase()} product${products.length === 1 ? '' : 's'} — delivered to your Chennai site in 60 minutes.</p>
+    ${chipsHTML}
   </div>
 </section>
 
@@ -430,20 +458,6 @@ ${header()}
     <div class="products-grid">
       ${products.map(p => productCard(p, category)).join('')}
     </div>
-
-    <section style="margin-top:48px;">
-      <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:14px;">Browse other categories</h2>
-      <div class="cat-list-grid" style="${CATEGORY_LIST_CSS.match(/\.cat-list-grid {([^}]*)}/)[1]}">
-        ${allCategories.filter(c => c.slug !== category.slug).map(c => `
-          <a href="/products/${c.slug}/" class="cat-link-card" style="background:#fff;border:1.5px solid #E7E5F1;border-radius:12px;padding:18px 16px;text-decoration:none;color:#14122B;display:flex;align-items:center;gap:12px;">
-            <span class="e" style="font-size:26px;">${c.e}</span>
-            <span>
-              <span class="n" style="font-weight:700;display:block;">${escapeHTML(c.name)}</span>
-              <span class="c" style="font-size:.8rem;color:#6B6880;">${c.productCount} product${c.productCount === 1 ? '' : 's'}</span>
-            </span>
-          </a>`).join('')}
-      </div>
-    </section>
 
   </div>
 </section>
