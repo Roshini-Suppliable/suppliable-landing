@@ -155,25 +155,26 @@ const PAGE_STYLES = `
 .back-link:hover { opacity: 1; text-decoration: underline; }
 ${BREADCRUMB_CSS}
 
-/* horizontal category chip rail (in hero, for category switching) */
+/* horizontal category tile rail (in hero, for category switching) */
 .cat-chips {
-  display: flex; gap: 8px; overflow-x: auto;
-  padding: 18px 0 4px; margin: 0 -4px;
+  display: flex; gap: 10px; overflow-x: auto;
+  padding: 20px 0 6px; margin: 0 -4px;
   scrollbar-width: none; -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
 .cat-chips::-webkit-scrollbar { display: none; }
 .cat-chip {
-  flex-shrink: 0; background: rgba(255,255,255,.10); color: #fff;
-  border: 1px solid rgba(255,255,255,.20);
-  padding: 7px 14px; border-radius: 999px;
-  font-weight: 500; font-size: .86rem; text-decoration: none;
-  transition: background .15s, border-color .15s, color .15s;
+  flex-shrink: 0; background: rgba(255,255,255,.08); color: #fff;
+  border: 1px solid rgba(255,255,255,.14);
+  padding: 10px 16px; border-radius: 10px;
+  font-weight: 500; font-size: .9rem; text-decoration: none;
+  transition: background .15s, border-color .15s, color .15s, transform .15s;
   white-space: nowrap;
   backdrop-filter: blur(8px);
+  display: inline-flex; align-items: center; gap: 8px;
 }
-.cat-chip:hover { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.40); }
-.cat-chip.active { background: #fff; color: var(--purple); border-color: #fff; font-weight: 600; }
+.cat-chip:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.32); }
+.cat-chip.active { background: #fff; color: var(--purple); border-color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
 
 .legal-page { background: var(--gray-50, #FAFAFB); padding: 40px 0 80px; min-height: 60vh; }
 

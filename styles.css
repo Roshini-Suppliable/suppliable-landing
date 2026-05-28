@@ -116,8 +116,11 @@ a { color: inherit; text-decoration: none; }
 
 /* =========================================================
    Typography
+   Headings inherit colour from their parent — so they stay white
+   on dark sections (.hero, .section-bulk, .download) and dark on
+   light backgrounds.
    ========================================================= */
-h1, h2, h3, h4 { color: var(--ink); }
+h1, h2, h3, h4 { color: inherit; }
 h1 { font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; }
 h2 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
 h3 { font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
@@ -539,6 +542,38 @@ h4 { font-weight: 600; line-height: 1.3; }
   animation: scroll-x 38s linear infinite;
 }
 .marquee:hover .marquee-track { animation-play-state: paused; }
+/* Brand logo tile (white background card, like the way Zepto / Blinkit
+   show brand strips). Mixes <img> logos and styled text fallbacks. */
+.brand-logo,
+.brand-text {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 20px;
+  min-width: 140px;
+  height: 76px;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+.brand-logo img {
+  max-height: 44px;
+  max-width: 110px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.brand-text {
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+/* legacy class — kept for backward compat with any cached HTML */
 .brand-chip {
   flex: none;
   background: rgba(255,255,255,.10);
