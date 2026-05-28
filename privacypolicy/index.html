@@ -94,8 +94,8 @@
 
     /* Data deletion form */
     .deletion-form {
-      background: var(--mist, #F4F3F9);
-      border: 2px solid var(--ink);
+      background: var(--gray-50, #FAFAFB);
+      border: 1px solid var(--gray-200, #E7E5EE);
       border-radius: 14px;
       padding: 28px;
       margin-top: 18px;
@@ -112,15 +112,19 @@
     .deletion-form select {
       width: 100%;
       padding: 11px 14px;
-      border: 2px solid var(--ink);
+      border: 1px solid var(--gray-200, #E7E5EE);
       border-radius: 8px;
       font: inherit;
       background: #fff;
       color: var(--ink);
+      transition: border-color .15s, box-shadow .15s;
     }
+    .deletion-form input:focus,
+    .deletion-form textarea:focus,
+    .deletion-form select:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(75,34,214,.12); }
     .deletion-form .field.invalid input,
     .deletion-form .field.invalid textarea,
-    .deletion-form .field.invalid select { border-color: #d33; }
+    .deletion-form .field.invalid select { border-color: var(--red, #DC2626); }
     .deletion-form .error {
       display: block;
       color: #d33;
@@ -148,23 +152,17 @@
     .deletion-form button {
       background: var(--orange);
       color: #fff;
-      border: 2px solid var(--ink);
+      border: 1px solid transparent;
       padding: 12px 24px;
       border-radius: 10px;
-      font-weight: 800;
+      font-weight: 600;
       cursor: pointer;
       font-size: 1rem;
-      box-shadow: 4px 4px 0 var(--ink);
-      transition: transform .15s, box-shadow .15s;
+      box-shadow: var(--shadow-orange, 0 6px 20px rgba(242,106,27,.25));
+      transition: transform .15s, box-shadow .15s, background .15s;
     }
-    .deletion-form button:hover {
-      transform: translate(-2px,-2px);
-      box-shadow: 6px 6px 0 var(--ink);
-    }
-    .deletion-form button:active {
-      transform: translate(2px,2px);
-      box-shadow: 2px 2px 0 var(--ink);
-    }
+    .deletion-form button:hover { background: var(--orange-dark, #D9560C); transform: translateY(-1px); }
+    .deletion-form button:active { transform: translateY(0); }
     .form-success {
       background: #E8F6EE;
       border-left: 4px solid var(--green, #1B9E4B);
