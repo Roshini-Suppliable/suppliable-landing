@@ -328,40 +328,127 @@ h4 { font-weight: 600; line-height: 1.3; }
 }
 
 /* =========================================================
-   Hero phone (live demo)
+   Hero truck (animated SVG delivery truck)
+   - The whole truck body bounces gently
+   - Wheels spin
+   - Speed lines streak past in the background
+   - Road dashes move right-to-left
    ========================================================= */
-.hero-phones {
+.hero-truck {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 660px;
+  min-height: 420px;
+  padding: 20px 0;
 }
-.phone-ghost {
-  position: absolute;
-  width: 300px;
-  height: 600px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 42px;
-  box-shadow: var(--shadow-xl);
-  transform: rotate(8deg) translate(56px, 22px);
+.truck-svg {
+  width: 100%;
+  max-width: 580px;
+  height: auto;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 18px 24px rgba(0,0,0,.28));
 }
-.phone-live { position: relative; z-index: 2; }
-.hero-device { transform: rotate(-3deg); }
-.live-tag {
+.truck-body {
+  animation: truck-bounce 1.4s ease-in-out infinite alternate;
+  transform-origin: 50% 50%;
+}
+@keyframes truck-bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-3px); }
+}
+.wheel {
+  animation: wheel-spin 0.65s linear infinite;
+}
+@keyframes wheel-spin {
+  to { transform: rotate(360deg); }
+}
+.road-dashes {
+  animation: road-move 0.42s linear infinite;
+}
+@keyframes road-move {
+  to { transform: translateX(-80px); }
+}
+
+/* Speed lines streaking past behind the truck */
+.speedlines {
   position: absolute;
-  top: -14px; left: 50%;
-  transform: translateX(-50%) rotate(-3deg);
-  z-index: 3;
-  background: var(--orange);
-  color: #fff;
-  font-weight: 700;
-  font-size: .78rem;
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-md);
-  white-space: nowrap;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.speedlines span {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,.6) 70%, rgba(255,255,255,0));
+  border-radius: 999px;
+  animation: streak 1s linear infinite;
+}
+.speedlines span:nth-child(1) { top: 18%; width: 120px; animation-delay: 0.00s; }
+.speedlines span:nth-child(2) { top: 32%; width: 160px; animation-delay: 0.15s; opacity: .8; }
+.speedlines span:nth-child(3) { top: 48%; width: 100px; animation-delay: 0.40s; }
+.speedlines span:nth-child(4) { top: 62%; width: 180px; animation-delay: 0.05s; }
+.speedlines span:nth-child(5) { top: 78%; width: 130px; animation-delay: 0.30s; opacity: .7; }
+.speedlines span:nth-child(6) { top: 88%; width: 90px;  animation-delay: 0.55s; }
+@keyframes streak {
+  from { left: 100%; }
+  to   { left: -200px; }
+}
+
+/* "60 min to your site" floating badge */
+.hero-badge {
+  position: absolute;
+  top: 8px;
+  right: 4%;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 12px 18px;
+  box-shadow: var(--shadow-lg);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: badge-float 3s ease-in-out infinite alternate;
+}
+.hero-badge .badge-pulse {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 8px; height: 8px;
+  background: var(--green, #16A34A);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(22,163,74,.5);
+  animation: pulse-dot 1.6s ease-out infinite;
+}
+@keyframes pulse-dot {
+  0%   { box-shadow: 0 0 0 0 rgba(22,163,74,.5); }
+  100% { box-shadow: 0 0 0 12px rgba(22,163,74,0); }
+}
+.hero-badge strong {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--purple);
+  line-height: 1;
+}
+.hero-badge .badge-sub {
+  font-size: .72rem;
+  color: var(--gray-500);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-top: 2px;
+}
+@keyframes badge-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .truck-body, .wheel, .road-dashes, .speedlines span, .hero-badge, .hero-badge .badge-pulse {
+    animation: none;
+  }
 }
 
 /* =========================================================
@@ -542,8 +629,8 @@ h4 { font-weight: 600; line-height: 1.3; }
   animation: scroll-x 38s linear infinite;
 }
 .marquee:hover .marquee-track { animation-play-state: paused; }
-/* Brand logo tile (white background card, like the way Zepto / Blinkit
-   show brand strips). Mixes <img> logos and styled text fallbacks. */
+/* Brand logo tile (white background card, like Zepto / Blinkit brand
+   strips). Mixes <img> logos and styled text fallbacks. */
 .brand-logo,
 .brand-text {
   flex: none;
@@ -551,26 +638,27 @@ h4 { font-weight: 600; line-height: 1.3; }
   align-items: center;
   justify-content: center;
   background: #fff;
-  border-radius: 12px;
-  padding: 14px 20px;
-  min-width: 140px;
-  height: 76px;
+  border-radius: 14px;
+  padding: 18px 28px;
+  width: 180px;
+  height: 96px;
   box-shadow: var(--shadow-sm);
   white-space: nowrap;
 }
 .brand-logo img {
-  max-height: 44px;
-  max-width: 110px;
-  width: auto;
-  height: auto;
+  max-height: 64px;
+  max-width: 124px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
+  mix-blend-mode: multiply;  /* removes the off-white card edges around logos */
 }
 .brand-text {
   color: var(--ink);
   font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: -0.01em;
+  font-size: 1.1rem;
+  letter-spacing: -0.015em;
 }
 
 /* legacy class — kept for backward compat with any cached HTML */
@@ -772,7 +860,7 @@ h4 { font-weight: 600; line-height: 1.3; }
 @media (max-width: 1000px) {
   .cat-grid { grid-template-columns: repeat(3, 1fr); }
   .hero-inner { grid-template-columns: 1fr; gap: var(--space-8); }
-  .hero-phones { order: 2; min-height: 0; }
+  .hero-truck { order: 2; min-height: 320px; }
   .how-inner { grid-template-columns: 1fr; gap: var(--space-10); }
   .how-steps { max-width: 560px; margin: 0 auto; }
   .footer-grid,
@@ -800,9 +888,9 @@ h4 { font-weight: 600; line-height: 1.3; }
   .bulk-inner { grid-template-columns: 1fr; gap: var(--space-8); }
   .stats { flex-wrap: wrap; gap: var(--space-5); }
   .stats li { min-width: calc(50% - 12px); }
-  .phone-ghost { display: none; }
-  .hero-device { transform: none; }
-  .live-tag { transform: translateX(-50%); }
+  .hero-truck { min-height: 280px; }
+  .hero-badge { top: 0; padding: 10px 14px; }
+  .hero-badge strong { font-size: 1.1rem; }
   .footer-grid,
   .footer-inner { grid-template-columns: 1fr; gap: var(--space-6); }
   .footer-bottom { flex-direction: column; gap: var(--space-2); text-align: center; }
