@@ -230,8 +230,10 @@
           </ul>
         </div>
 
-        <div class="hero-truck">
-          <!-- Speed lines streaking past behind the truck (mixed white + purple tint) -->
+        <div class="hero-truck" role="img"
+             aria-label="Suppliable Bolero pickup carrying Ramco cement bags, AAC blocks and Finolex pipes, delivering in 60 minutes">
+
+          <!-- Speed lines (12, mixed white + purple) -->
           <div class="speedlines" aria-hidden="true">
             <span class="sl"></span><span class="sl"></span><span class="sl"></span>
             <span class="sl sl-p"></span><span class="sl"></span><span class="sl sl-p"></span>
@@ -244,13 +246,49 @@
           <span class="dust dust-b" aria-hidden="true"></span>
           <span class="dust dust-c" aria-hidden="true"></span>
 
-          <img src="assets/hero-truck.png"
-               alt="Suppliable Bolero pickup loaded with Ramco cement bags, AAC blocks and Finolex pipes"
-               class="hero-truck-img"
-               width="1273" height="580"
-               fetchpriority="high">
+          <!-- CSS truck -->
+          <div class="truck" aria-hidden="true">
+            <!-- CABIN -->
+            <div class="cabin">
+              <div class="window"></div>
+              <div class="headlight"></div>
+              <div class="door-badge">
+                <strong>SUPPLIABLE</strong>
+                <span>BUILD BETTER, FASTER</span>
+              </div>
+            </div>
 
-          <!-- Road at the bottom, with animated dashes scrolling left -->
+            <!-- BACK CONTAINER -->
+            <div class="container-bed">
+              <div class="materials">
+                <!-- RAMCO CEMENT bags -->
+                <div class="cement">
+                  <div class="bag">RAMCO</div>
+                  <div class="bag">RAMCO</div>
+                  <div class="bag">RAMCO</div>
+                </div>
+                <!-- AAC BLOCKS -->
+                <div class="blocks" aria-label="AAC blocks">
+                  <div class="block"></div>
+                  <div class="block"></div>
+                  <div class="block"></div>
+                  <div class="block"></div>
+                </div>
+                <!-- FINOLEX PIPES -->
+                <div class="pipes" aria-label="Finolex pipes">
+                  <div class="pipe">Finolex</div>
+                  <div class="pipe">Finolex</div>
+                  <div class="pipe">Finolex</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WHEELS -->
+            <div class="wheel wheel1"></div>
+            <div class="wheel wheel2"></div>
+          </div>
+
+          <!-- Road at the bottom -->
           <div class="road" aria-hidden="true">
             <div class="road-dashes"></div>
           </div>
