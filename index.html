@@ -231,11 +231,15 @@
         </div>
 
         <div class="hero-truck">
-          <!-- Speed lines streaking past behind the truck -->
+          <!-- Speed lines streaking past behind the truck (mixed white + purple tint) -->
           <div class="speedlines" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span class="sl"></span><span class="sl"></span><span class="sl"></span>
+            <span class="sl sl-p"></span><span class="sl"></span><span class="sl sl-p"></span>
+            <span class="sl"></span><span class="sl sl-p"></span><span class="sl"></span>
+            <span class="sl sl-p"></span><span class="sl"></span><span class="sl"></span>
           </div>
-          <!-- Dust puff under the rear wheel -->
+
+          <!-- Dust puffs behind the rear wheel -->
           <span class="dust dust-a" aria-hidden="true"></span>
           <span class="dust dust-b" aria-hidden="true"></span>
           <span class="dust dust-c" aria-hidden="true"></span>
@@ -245,6 +249,18 @@
                class="hero-truck-img"
                width="1273" height="580"
                fetchpriority="high">
+
+          <!-- Road at the bottom, with animated dashes scrolling left -->
+          <div class="road" aria-hidden="true">
+            <div class="road-dashes"></div>
+          </div>
+
+          <!-- Floating "60 min — to your site" badge -->
+          <div class="hero-badge">
+            <span class="badge-pulse"></span>
+            <strong>60 min</strong>
+            <span class="badge-sub">to your site</span>
+          </div>
         </div>
       </div>
     </section>
