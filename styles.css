@@ -336,6 +336,7 @@ h4 { font-weight: 600; line-height: 1.3; }
   align-items: center;
   justify-content: center;
   min-height: 420px;
+  overflow: hidden;
 }
 .hero-truck-img {
   width: 100%;
@@ -343,7 +344,47 @@ h4 { font-weight: 600; line-height: 1.3; }
   height: auto;
   object-fit: contain;
   display: block;
+  position: relative;
+  z-index: 2;
   filter: drop-shadow(0 22px 24px rgba(0,0,0,.28));
+}
+
+/* Speed lines streaking past the truck (white + brand purple + orange) */
+.speedlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.speedlines .sl {
+  position: absolute;
+  height: 2px;
+  border-radius: 999px;
+  animation: streak 1.05s linear infinite;
+}
+.sl-w { background: linear-gradient(to right, transparent, rgba(255,255,255,.65) 70%, rgba(255,255,255,0)); }
+.sl-p { background: linear-gradient(to right, transparent, rgba(196,175,255,.95) 70%, rgba(196,175,255,0)); height: 2.5px; }
+.sl-o { background: linear-gradient(to right, transparent, rgba(255,170,90,.95)  70%, rgba(255,170,90,0));  height: 2.5px; }
+
+.speedlines .sl:nth-child(1)  { top: 6%;  width: 130px; animation-delay: 0.00s; }
+.speedlines .sl:nth-child(2)  { top: 13%; width: 200px; animation-delay: 0.22s; }
+.speedlines .sl:nth-child(3)  { top: 20%; width: 110px; animation-delay: 0.45s; }
+.speedlines .sl:nth-child(4)  { top: 27%; width: 180px; animation-delay: 0.08s; }
+.speedlines .sl:nth-child(5)  { top: 35%; width: 150px; animation-delay: 0.30s; }
+.speedlines .sl:nth-child(6)  { top: 44%; width: 170px; animation-delay: 0.55s; }
+.speedlines .sl:nth-child(7)  { top: 52%; width: 110px; animation-delay: 0.05s; }
+.speedlines .sl:nth-child(8)  { top: 60%; width: 220px; animation-delay: 0.42s; }
+.speedlines .sl:nth-child(9)  { top: 68%; width: 140px; animation-delay: 0.65s; }
+.speedlines .sl:nth-child(10) { top: 78%; width: 200px; animation-delay: 0.15s; }
+.speedlines .sl:nth-child(11) { top: 87%; width: 100px; animation-delay: 0.50s; }
+.speedlines .sl:nth-child(12) { top: 94%; width: 160px; animation-delay: 0.28s; }
+@keyframes streak {
+  from { left: 100%; }
+  to   { left: -240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .speedlines .sl { animation: none; opacity: 0; }
 }
 
 /* Static 60-min badge */
